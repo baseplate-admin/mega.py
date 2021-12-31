@@ -34,7 +34,6 @@ Run the following command, or run setup from the latest github source.
 
 ```python
 pip install mega.py
-pip install https://raw.githubusercontent.com/baseplate-admin/mega.py/master/pycryptodome-3.12.0-cp35-abi3-win_amd64.whl
 ```
 
 ### Import mega.py

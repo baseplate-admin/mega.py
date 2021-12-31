@@ -1,4 +1,3 @@
-from Crypto.Cipher import AES
 import json
 import base64
 import struct
@@ -6,32 +5,23 @@ import binascii
 import random
 import sys
 
-# Python3 compatibility
-if sys.version_info < (3, ):
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
 
-    def makebyte(x):
-        return x
-
-    def makestring(x):
-        return x
-else:
-    import codecs
-
-    def makebyte(x):
-        return codecs.latin_1_encode(x)[0]
-
-    def makestring(x):
-        return codecs.latin_1_decode(x)[0]
+IV = bytes(b"\0" * 16)
+BACKEND = default_backend()
 
 
 def aes_cbc_encrypt(data, key):
-    aes_cipher = AES.new(key, AES.MODE_CBC, makebyte('\0' * 16))
-    return aes_cipher.encrypt(data)
+    aes_cipher = Cipher(algorithms.AES(key), modes.CBC(IV), backend=BACKEND)
+    encryptor = aes_cipher.encryptor()
+    return encryptor.update(data) + encryptor.finalize()
 
 
 def aes_cbc_decrypt(data, key):
-    aes_cipher = AES.new(key, AES.MODE_CBC, makebyte('\0' * 16))
-    return aes_cipher.decrypt(data)
+    aes_cipher = Cipher(algorithms.AES(key),  modes.CBC(IV), backend=BACKEND)
+    decryptor = aes_cipher.decryptor()
+    return decryptor.update(data) + decryptor.finalize()
 
 
 def aes_cbc_encrypt_a32(data, key):
@@ -75,7 +65,7 @@ def decrypt_key(a, key):
 
 
 def encrypt_attr(attr, key):
-    attr = makebyte('MEGA' + json.dumps(attr))
+    attr = bytes('MEGA' + json.dumps(attr))
     if len(attr) % 16:
         attr += b'\0' * (16 - len(attr) % 16)
     return aes_cbc_encrypt(attr, a32_to_str(key))
@@ -83,7 +73,7 @@ def encrypt_attr(attr, key):
 
 def decrypt_attr(attr, key):
     attr = aes_cbc_decrypt(attr, a32_to_str(key))
-    attr = makestring(attr)
+    attr = str(attr)
     attr = attr.rstrip('\0')
     return json.loads(attr[4:]) if attr[:6] == 'MEGA{"' else False
 
@@ -94,7 +84,7 @@ def a32_to_str(a):
 
 def str_to_a32(b):
     if isinstance(b, str):
-        b = makebyte(b)
+        b = bytes(b)
     if len(b) % 4:
         # pad to multiple of 4
         b += b'\0' * (4 - len(b) % 4)
@@ -139,7 +129,7 @@ def base64_to_a32(s):
 
 def base64_url_encode(data):
     data = base64.b64encode(data)
-    data = makestring(data)
+    data = str(data)
     for search, replace in (('+', '-'), ('/', '_'), ('=', '')):
         data = data.replace(search, replace)
     return data

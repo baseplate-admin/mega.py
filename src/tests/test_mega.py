@@ -13,6 +13,8 @@ TEST_PUBLIC_URL = (
 TEST_FILE = os.path.basename(__file__)
 MODULE = 'mega.mega'
 
+EMAIL = 'dopim64789@play588.com'
+PASS = 'CqscqJK2vPxp2CD'
 
 @pytest.fixture
 def folder_name():
@@ -22,7 +24,7 @@ def folder_name():
 @pytest.fixture
 def mega(folder_name):
     mega_ = Mega()
-    mega_.login(email=os.environ['EMAIL'], password=os.environ['PASS'])
+    mega_.login(email=EMAIL, password=PASS)
     created_nodes = mega_.create_folder(folder_name)
     yield mega_
     node_id = next(iter(created_nodes.values()))
