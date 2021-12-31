@@ -14,7 +14,7 @@ import binascii
 import tempfile
 import shutil
 
-import requests
+import httpx as requests # Money-patch 🐒
 from tenacity import retry, wait_exponential, retry_if_exception_type
 
 from .errors import ValidationError, RequestError
