@@ -1,3 +1,3 @@
 httpx
-pycryptodome @ https://raw.githubusercontent.com/baseplate-admin/mega.py/master/pycryptodome-3.12.0-cp35-abi3-win_amd64.whl
+pycryptodome
 tenacity>=5.1.5,<6.0.0
